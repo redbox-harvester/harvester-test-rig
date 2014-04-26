@@ -15,12 +15,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
-package au.com.redboxresearchdata.harvester.test.rig.runner;
+package au.com.redboxresearchdata.harvester.testrig.runner;
 
 import groovy.util.ConfigObject;
 
 import java.util.Map;
 
+import org.apache.activemq.broker.BrokerService;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -50,7 +51,8 @@ public final class Console {
 
 	@SuppressWarnings("rawtypes")
 	public static void main(final String[] args) {
-		Map configMap = getConfigMap(args);
+
+        Map configMap = getConfigMap(args);
 		String contextPath = StringUtils.defaultIfEmpty((String) configMap.get("file.siPath"), CONTEXT_DEFAULT);
 
 		final GenericXmlApplicationContext context = new GenericXmlApplicationContext();

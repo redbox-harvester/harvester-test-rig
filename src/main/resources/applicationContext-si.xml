@@ -1,43 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:int="http://www.springframework.org/schema/integration"
-	xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-jmx="http://www.springframework.org/schema/integration/jmx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/integration
             http://www.springframework.org/schema/integration/spring-integration.xsd
-            http://www.springframework.org/schema/integration/jms
-            http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd">
-
-	<bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="connectionFactory" />
-		<property name="destination" ref="channelOut" />
-		<property name="messageListener" ref="messageListener" />
-	</bean>
-
-	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-		<property name="targetConnectionFactory">
-			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-				<property name="brokerURL" value="${activemq.url}" />
-			</bean>
-		</property>
-		<property name="sessionCacheSize" value="10" />
-		<property name="cacheProducers" value="false" />
-	</bean>
+            http://www.springframework.org/schema/integration/jmx 
+            http://www.springframework.org/schema/integration/jmx/spring-integration-jmx.xsd">
 
 
-	<bean id="channelOut" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="queue.reply"/>
-	</bean>
-	
-	<int:poller id="poller" default="true" fixed-delay="1000"/>
+    <int-jmx:mbean-export default-domain="au.com.redboxresearchdata.harvester.testrig" server="mbeanServer"/>
+    <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
 
-	<bean id="messageListener" class="au.com.redboxresearchdata.harvester.test.rig.jms.HarvestListener" />
-	
-	<bean id="placeholderProperties" class="au.com.redboxresearchdata.util.config.ConfigSlurperPlaceholderConfigurer">
-		<property name="environment" value="#{systemProperties['environment']}"/>
-		<property name="defaultEnvironment" value="production" />
-		<property name="location" value="#{systemProperties['runtime.config.file']}" />
-	</bean>
+    <import resource="applicationContext-amq.xml"/>
+
+    <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="cachingConnectionFactory"/>
+        <property name="destination" ref="channelOut"/>
+        <property name="messageListener" ref="messageListener"/>
+    </bean>
+
+    <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="connectionFactory"/>
+        <property name="sessionCacheSize" value="10"/>
+        <property name="cacheProducers" value="false"/>
+    </bean>
+
+    <bean id="channelOut" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="test"/>
+    </bean>
+
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="${activemq.url}"/>
+    </bean>
+
+    <int:poller id="poller" default="true" fixed-delay="2000" receive-timeout="10000"/>
+
+    <bean id="messageListener"
+          class="au.com.redboxresearchdata.harvester.testrig.service.jms.listener.HarvestListener"/>
+
+    <bean id="placeholderProperties" class="au.com.redboxresearchdata.util.config.ConfigSlurperPlaceholderConfigurer">
+        <property name="environment" value="#{systemProperties['environment']}"/>
+        <property name="defaultEnvironment" value="production"/>
+        <property name="location" value="#{systemProperties['runtime.config.file']}"/>
+    </bean>
 </beans>
