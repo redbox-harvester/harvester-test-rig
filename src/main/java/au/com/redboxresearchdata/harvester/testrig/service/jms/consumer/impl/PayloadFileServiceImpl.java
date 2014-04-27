@@ -29,7 +29,7 @@ import java.io.IOException;
 /**
  * Created by mulhollm on 4/27/14.
  */
-@Component
+@Component(value = "payloadFileService")
 public class PayloadFileServiceImpl implements PayloadFileService {
 
     @ServiceActivator
