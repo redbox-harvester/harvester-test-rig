@@ -15,34 +15,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  ******************************************************************************/
-package au.com.redboxresearchdata.harvester.testrig.service.jms.consumer.impl;
-
-import au.com.redboxresearchdata.harvester.testrig.service.jms.consumer.PayloadService;
-import org.apache.commons.io.FileUtils;
-import org.springframework.integration.annotation.Header;
-import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.io.IOException;
+package au.com.redboxresearchdata.harvester.testrig.service.jms.consumer;
 
 /**
  * Created by mulhollm on 4/27/14.
  */
-@Component(value = "payloadService")
-public class PayloadServiceImpl implements PayloadService {
-
-    @ServiceActivator
-    public void onPayload(String payload, @Header("outputFile") String outputFile) {
-        writeToFile(payload, outputFile);
-    }
-
-    private void writeToFile(String payload, String outputFile) {
-        File file = new File(outputFile);
-        try {
-            FileUtils.writeStringToFile(file, payload);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+public interface PayloadFileService {
+    public void onPayload(String payload, String outputFile);
 }

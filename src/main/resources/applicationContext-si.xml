@@ -36,7 +36,7 @@
         <int:header-enricher>
             <int:header name="outputFile" value="${consumer.outputFile}"/>
         </int:header-enricher>
-        <int:service-activator ref="payloadService"/>
+        <int:service-activator ref="payloadFileService"/>
     </int:chain>
 
     <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
