@@ -2,44 +2,56 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
        xmlns:int-jmx="http://www.springframework.org/schema/integration/jmx"
+       xmlns:int-jms="http://www.springframework.org/schema/integration/jms"
        xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/integration
             http://www.springframework.org/schema/integration/spring-integration.xsd
             http://www.springframework.org/schema/integration/jmx 
-            http://www.springframework.org/schema/integration/jmx/spring-integration-jmx.xsd">
+            http://www.springframework.org/schema/integration/jmx/spring-integration-jmx.xsd
+            http://www.springframework.org/schema/integration/jms
+            http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
+    <context:component-scan base-package="au.com.redboxresearchdata.harvester.testrig" />
+    <context:annotation-config/>
 
     <int-jmx:mbean-export default-domain="au.com.redboxresearchdata.harvester.testrig" server="mbeanServer"/>
     <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean"/>
 
     <import resource="applicationContext-amq.xml"/>
 
-    <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="cachingConnectionFactory"/>
-        <property name="destination" ref="channelOut"/>
-        <property name="messageListener" ref="messageListener"/>
-    </bean>
+    <int:channel id="receiveChannel"/>
+
+    <int-jms:inbound-channel-adapter id="channelIn" channel="receiveChannel" destination="channelOut"
+                                     connection-factory="cachingConnectionFactory">
+        <int:poller default="true" receive-timeout="${consumer.pollTimeout}" fixed-rate="${consumer.pollRate}"
+                    max-messages-per-poll="${consumer.queueCapacity}"/>
+    </int-jms:inbound-channel-adapter>
+
+    <int:chain input-channel="receiveChannel">
+        <int:header-enricher>
+            <int:header name="outputFile" value="${consumer.outputFile}"/>
+        </int:header-enricher>
+        <int:service-activator ref="payloadService"/>
+    </int:chain>
 
     <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
         <property name="targetConnectionFactory" ref="connectionFactory"/>
-        <property name="sessionCacheSize" value="10"/>
+        <property name="sessionCacheSize" value="${consumer.sessionCacheSize}"/>
         <property name="cacheProducers" value="false"/>
-    </bean>
-
-    <bean id="channelOut" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="test"/>
     </bean>
 
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="${activemq.url}"/>
     </bean>
 
-    <int:poller id="poller" default="true" fixed-delay="2000" receive-timeout="10000"/>
-
-    <bean id="messageListener"
-          class="au.com.redboxresearchdata.harvester.testrig.service.jms.listener.HarvestListener"/>
+    <bean id="channelOut" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="${consumer.queueName}"/>
+    </bean>
 
     <bean id="placeholderProperties" class="au.com.redboxresearchdata.util.config.ConfigSlurperPlaceholderConfigurer">
         <property name="environment" value="#{systemProperties['environment']}"/>

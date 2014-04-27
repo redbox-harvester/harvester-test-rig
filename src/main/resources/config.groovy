@@ -9,11 +9,15 @@ environments {
 		}
 		activemq {
 			url = "tcp://localhost:9222"
+            dataDirectory = file.base + "activemq-data"
 		}
-		harvest {
+		consumer {
 			pollRate = "5000"
 			queueCapacity = "10"
 			pollTimeout = "5000"
+            outputFile = "test-rig-output.txt"
+            sessionCacheSize = "10"
+            queueName = "test"
 		}
 	}
 }

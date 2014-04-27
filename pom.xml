@@ -228,6 +228,12 @@
             <artifactId>commons-pool</artifactId>
             <version>1.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>3.16</version>
+        </dependency>
 		
 		<!--  Custom utils -->
 		<dependency>
