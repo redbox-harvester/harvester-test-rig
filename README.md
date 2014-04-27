@@ -6,6 +6,7 @@ This follows the model provided by harvester client, which means:
 * config is provided/updated in groovy file
 
 * to run:
+
 1. get zip file using maven or download
 2.  unzip
 3.   change into directory
@@ -13,5 +14,6 @@ This follows the model provided by harvester client, which means:
 5.     ./start-test-rig.sh
 
 * to use harvester to send message:
+
 1. change queue name to same as provided in test-rig's consumer config
 2.  change url (including portname) to same as provided in test-rig's amq config
