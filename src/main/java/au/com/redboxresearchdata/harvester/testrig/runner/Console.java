@@ -90,6 +90,7 @@ public final class Console {
 			exitStatus = 0;
 		} catch (Exception e) {
 			LOG.warn("Interrupted, shutting down...");
+            exitStatus = 1;
 		} finally {
 			LOG.info("Exiting application...bye.");
 			System.exit(exitStatus);
