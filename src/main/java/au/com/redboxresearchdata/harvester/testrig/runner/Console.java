@@ -63,7 +63,7 @@ public final class Console {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Map getConfigMap(String[] args) {
+	private static Map getConfigMap(String[] args) {
 		String configFilePath = CONFIG_FILE_PATH_DEFAULT;
 		if (!(ArrayUtils.isEmpty(args)) && StringUtils.isNotBlank(args[0])) {
 			configFilePath = args[0];
@@ -81,7 +81,7 @@ public final class Console {
 		return configMap;
 	}
 
-	public static void run(GenericXmlApplicationContext context) {
+	private static void run(GenericXmlApplicationContext context) {
 		int exitStatus = -1;
 		try {
 			while (context.isRunning()) {
