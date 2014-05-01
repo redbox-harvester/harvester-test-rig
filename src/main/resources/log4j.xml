@@ -9,13 +9,21 @@
 			<param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t][%c] %m%n" />
 		</layout>
 	</appender>
+    <appender name="rollingFile" class="org.apache.log4j.RollingFileAppender">
+        <param name="file" value="logs/main.log"/>
+        <param name="MaxFileSize" value="1048576KB" />
+        <param name="MaxBackupIndex" value="10" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t][%c] %m%n" />
+        </layout>
+    </appender>
 
 	<!-- Loggers -->
 	<logger name="org.springframework.integration">
 		<level value="debug" />
 	</logger>
 
-	<logger name="au.com.redboxresearchdata.havester.json.client">
+	<logger name="au.com.redboxresearchdata.havester.testrig">
 		<level value="debug" />
 	</logger>
 
@@ -23,6 +31,7 @@
 	<root>
 		<priority value="debug" />
 		<appender-ref ref="console" />
+        <appender-ref ref="rollingFile" />
 	</root>
 
 </log4j:configuration>

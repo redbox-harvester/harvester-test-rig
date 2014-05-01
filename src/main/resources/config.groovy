@@ -10,6 +10,7 @@ environments {
 		activemq {
 			url = "tcp://localhost:9222"
             dataDirectory = file.base + "activemq-data"
+            queueName = "test"
 		}
 		consumer {
 			pollRate = "5000"
@@ -17,7 +18,6 @@ environments {
 			pollTimeout = "5000"
             outputFile = "test-rig-output.txt"
             sessionCacheSize = "10"
-            queueName = "test"
 		}
 	}
 }

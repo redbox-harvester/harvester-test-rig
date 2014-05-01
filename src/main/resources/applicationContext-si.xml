@@ -50,7 +50,7 @@
     </bean>
 
     <bean id="channelOut" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="${consumer.queueName}"/>
+        <constructor-arg value="${activemq.queueName}"/>
     </bean>
 
     <bean id="placeholderProperties" class="au.com.redboxresearchdata.util.config.ConfigSlurperPlaceholderConfigurer">
